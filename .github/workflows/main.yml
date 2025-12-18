@@ -2,9 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # Change to your default branch if different
+    branches: [main] # Change to your default branch if different
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -15,17 +15,17 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.2'  # Pin to stable, e.g., 3.24.0
+          flutter-version: "3.38.2" # Pin to stable, e.g., 3.24.0
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build web release
-        run: flutter build web --release
+        run: flutter build web --release --base-href "/dino_run_in_flutter/"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'  # Only deploy from main branch
+        if: github.ref == 'refs/heads/main' # Only deploy from main branch
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
