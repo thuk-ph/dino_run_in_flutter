@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 
 import '../audio/audio_controller.dart';
@@ -21,7 +22,8 @@ import 'endless_world.dart';
 ///
 /// Note that both of the last are passed in to the super constructor, they
 /// could also be set inside of `onLoad` for example.
-class EndlessRunner extends FlameGame<EndlessWorld> with HasCollisionDetection {
+class EndlessRunner extends FlameGame<EndlessWorld>
+    with HasCollisionDetection, RiverpodGameMixin {
   EndlessRunner({
     required this.level,
     required PlayerProgress playerProgress,
@@ -41,6 +43,8 @@ class EndlessRunner extends FlameGame<EndlessWorld> with HasCollisionDetection {
   /// that only needs to be set once when the level starts up.
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
+
     // The backdrop is a static layer behind the world that the camera is
     // looking at, so here we add our parallax background.
     camera.backdrop.add(Background(speed: world.speed));
