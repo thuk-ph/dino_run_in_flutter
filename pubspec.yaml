@@ -38,6 +38,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/cactus/
+    - assets/images/dinos/
     - assets/images/dash/
     - assets/images/enemies/
     - assets/images/scenery/
