@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dino_run_in_flutter/flame_game/components/cactus.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
@@ -8,8 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../level_selection/levels.dart';
 import '../player_progress/player_progress.dart';
-import 'components/obstacle.dart';
-import 'components/player.dart';
+import 'components/dino.dart';
 import 'components/point.dart';
 import 'game_screen.dart';
 
@@ -80,7 +80,7 @@ class EndlessWorld extends World with TapCallbacks, HasGameReference {
     add(
       SpawnComponent(
         factory: (_) =>
-            Obstacle.random(random: _random, canSpawnTall: level.canSpawnTall),
+            Cactus.random(random: _random, canSpawnTall: level.canSpawnTall),
         period: 5,
         area: Rectangle.fromPoints(
           Vector2(size.x / 2, groundLevel),
@@ -150,15 +150,7 @@ class EndlessWorld extends World with TapCallbacks, HasGameReference {
   /// if and how the player should jump.
   @override
   void onTapDown(TapDownEvent event) {
-    // Which direction the player should jump.
-    final towards = (event.localPosition - player.position)..normalize();
-    // If the tap is underneath the player no jump is triggered, but if it is
-    // above the player it triggers a jump, even though the player might be in
-    // the air. This makes it possible to later implement double jumping inside
-    // of the `player` class if one would want to.
-    if (towards.y.isNegative) {
-      player.jump(towards);
-    }
+    player.jump();
   }
 
   /// A helper function to define how fast a certain level should be.

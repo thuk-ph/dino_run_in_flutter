@@ -1,13 +1,16 @@
+import 'package:dino_run_in_flutter/flame_game/components/health/health_component.dart';
+import 'package:dino_run_in_flutter/flame_game/components/health/health_providers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/animation.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../../audio/sounds.dart';
 import '../effects/hurt_effect.dart';
 import '../effects/jump_effect.dart';
 import '../endless_runner.dart';
 import '../endless_world.dart';
-import 'obstacle.dart';
 import 'point.dart';
 
 /// The [Player] is the component that the physical player of the game is
@@ -16,7 +19,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     with
         CollisionCallbacks,
         HasWorldReference<EndlessWorld>,
-        HasGameReference<EndlessRunner> {
+        HasGameReference<EndlessRunner>,
+        RiverpodComponentMixin {
   Player({required this.addScore, required this.resetScore, super.position})
     : super(size: Vector2.all(150), anchor: Anchor.center, priority: 1);
 
@@ -123,10 +127,26 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     current = PlayerState.running;
     _lastPosition.setFrom(position);
 
-    // When adding a CircleHitbox without any arguments it automatically
-    // fills up the size of the component as much as it can without overflowing
-    // it.
-    add(CircleHitbox());
+    add(HealthComponent(initialHealth: 500));
+  }
+
+  @override
+  void onMount() async {
+    addToGameWidgetBuild(() {
+      ref.listen(healthChangedEventProvider, (previous, healthChanged) {
+        healthChanged.whenData((value) {
+          if (this == value.component &&
+              value.previousHealth > value.currentHealth) {
+            current = PlayerState.hurting;
+
+            game.audioController.playSfx(SfxType.damage);
+            resetScore();
+            add(HurtEffect());
+          }
+        });
+      });
+    });
+    super.onMount();
   }
 
   @override
@@ -162,12 +182,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     PositionComponent other,
   ) {
     super.onCollisionStart(intersectionPoints, other);
-    // When the player collides with an obstacle it should lose all its points.
-    if (other is Obstacle) {
-      game.audioController.playSfx(SfxType.damage);
-      resetScore();
-      add(HurtEffect());
-    } else if (other is Point) {
+    if (other is Point) {
       // When the player collides with a point it should gain a point and remove
       // the `Point` from the game.
       game.audioController.playSfx(SfxType.score);
