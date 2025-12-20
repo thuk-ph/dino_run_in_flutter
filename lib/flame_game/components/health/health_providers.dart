@@ -1,21 +1,27 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import "package:riverpod/riverpod.dart";
 import 'package:dino_run_in_flutter/flame_game/components/health/health_events.dart';
 
 final healthChangedEventProvider =
-    StreamNotifierProvider<HealthChangedEventNotifier, HealthChangedEvent>(
+    AsyncNotifierProvider<HealthChangedEventNotifier, HealthChangedEvent>(
       HealthChangedEventNotifier.new,
     );
 
 final healthDepletedEventProvider =
-    StreamNotifierProvider<HealthDepletedEventNotifier, HealthDepletedEvent>(
+    AsyncNotifierProvider<HealthDepletedEventNotifier, HealthDepletedEvent>(
       HealthDepletedEventNotifier.new,
     );
 
-class HealthChangedEventNotifier extends StreamNotifier<HealthChangedEvent> {
+class HealthChangedEventNotifier extends AsyncNotifier<HealthChangedEvent> {
   @override
-  Stream<HealthChangedEvent> build() {
-    return Stream.empty();
+  FutureOr<HealthChangedEvent> build() {
+    return HealthChangedEvent(
+      previousHealth: 0,
+      currentHealth: 0,
+      component: Component(),
+    );
   }
 
   void emitHealthChanged({
@@ -28,18 +34,18 @@ class HealthChangedEventNotifier extends StreamNotifier<HealthChangedEvent> {
       currentHealth: currentHealth,
       component: component,
     );
-    state = AsyncValue.data(event);
+    state = AsyncData(event);
   }
 }
 
-class HealthDepletedEventNotifier extends StreamNotifier<HealthDepletedEvent> {
+class HealthDepletedEventNotifier extends AsyncNotifier<HealthDepletedEvent> {
   @override
-  Stream<HealthDepletedEvent> build() {
-    return Stream.empty();
+  FutureOr<HealthDepletedEvent> build() {
+    return HealthDepletedEvent(component: Component());
   }
 
   void emitHealthDepleted({required Component component}) {
     final event = HealthDepletedEvent(component: component);
-    state = AsyncValue.data(event);
+    state = AsyncData(event);
   }
 }

@@ -25,6 +25,7 @@ dependencies:
 
   flame_riverpod: ^5.5.0
   riverpod: ^3.0.3
+  flutter_riverpod: ^3.0.3
 
 dev_dependencies:
   flame_test: ^1.16.2
