@@ -23,6 +23,10 @@ dependencies:
   google_fonts: ^6.2.0
   logging: ^1.2.0
 
+  flame_riverpod: ^5.5.0
+  riverpod: ^3.0.3
+  flutter_riverpod: ^3.0.3
+
 dev_dependencies:
   flame_test: ^1.16.2
   flutter_lints: ^6.0.0
@@ -38,6 +42,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/cactus/
+    - assets/images/dinos/
     - assets/images/dash/
     - assets/images/enemies/
     - assets/images/scenery/

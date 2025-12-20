@@ -1,4 +1,4 @@
-import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_ui/nes_ui.dart';
@@ -27,8 +27,10 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioController = context.read<AudioController>();
     return Scaffold(
-      body: GameWidget<EndlessRunner>(
-        key: const Key('play session'),
+      body: RiverpodAwareGameWidget<EndlessRunner>(
+        key: GlobalKey<RiverpodAwareGameWidgetState<EndlessRunner>>(
+          debugLabel: "play_session",
+        ),
         game: EndlessRunner(
           level: level,
           playerProgress: context.read<PlayerProgress>(),
